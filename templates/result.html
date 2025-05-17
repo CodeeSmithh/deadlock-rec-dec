@@ -1,0 +1,269 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Deadlock Detection Result</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #dfe9f3, #f0f2f5);
+      color: #2c3e50;
+    }
+
+    .box {
+      max-width: 700px;
+      margin: 80px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease-in-out;
+    }
+
+    h2 {
+      font-size: 28px;
+      color: #34495e;
+      margin-bottom: 25px;
+    }
+
+    .safe {
+      color: #27ae60;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .deadlock {
+      color: #e74c3c;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .info {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: background 0.2s ease-in-out;
+    }
+
+    a:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 768px) {
+      .box {
+        margin: 40px 20px;
+        padding: 30px 20px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .safe, .deadlock {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>🧠 Deadlock Detection Result</h2>
+
+    {% if result.terminated|length == 0 %}
+      <p class="safe">✅ No Deadlock Detected</p>
+      <p class="info">The system is in a safe state. All processes can complete without conflict.</p>
+    {% else %}
+     <p class="deadlock">⚠️ Deadlock Detected</p>
+<p class="info">
+  The following processes were terminated to recover:
+  <strong>{{ result.terminated | join(", ") }}</strong>
+</p>
+
+<div class="info">
+  <h3 style="margin-top: 20px; font-size: 18px; color: #333;">🔍 Recovery Steps:</h3>
+  <ul style="text-align: left; padding-left: 20px;">
+    {% for step in result.steps %}
+      <li style="margin-bottom: 8px;">{{ step }}</li>
+    {% endfor %}
+  </ul>
+</div>
+
+
+    <a href="/">← Back to Home</a>
+  </div>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Deadlock Detection Result</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #dfe9f3, #f0f2f5);
+      color: #2c3e50;
+    }
+
+    .box {
+      max-width: 750px;
+      margin: 80px auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 14px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+      text-align: center;
+      transition: all 0.3s ease-in-out;
+    }
+
+    h2 {
+      font-size: 30px;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .safe {
+      color: #2ecc71;
+      font-size: 22px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .deadlock {
+      color: #e74c3c;
+      font-size: 22px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .info {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 25px;
+    }
+
+    .steps {
+      text-align: left;
+      margin-top: 25px;
+      padding-left: 20px;
+    }
+
+    .steps h3 {
+      font-size: 18px;
+      color: #2c3e50;
+      margin-bottom: 15px;
+    }
+
+    .steps ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .steps li {
+      background: #f1f5f9;
+      border-left: 4px solid #3498db;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      font-size: 15px;
+      color: #333;
+      display: flex;
+      align-items: center;
+    }
+
+    .steps li::before {
+      content: "🛠️";
+      margin-right: 10px;
+      font-size: 18px;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 30px;
+      text-decoration: none;
+      background-color: #007bff;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: background 0.2s ease-in-out;
+    }
+
+    a:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 768px) {
+      .box {
+        margin: 40px 20px;
+        padding: 30px 20px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .safe, .deadlock {
+        font-size: 18px;
+      }
+
+      .steps li {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>🧠 Deadlock Detection Result</h2>
+
+    {% if result.terminated|length == 0 %}
+      <p class="safe">✅ No Deadlock Detected</p>
+      <p class="info">The system is in a safe state. All processes can complete without conflict.</p>
+    {% else %}
+      <p class="deadlock">⚠️ Deadlock Detected</p>
+      <p class="info">
+        The following processes were terminated to recover:
+        <strong>{{ result.terminated | join(", ") }}</strong>
+      </p>
+
+      <div class="steps">
+        <h3>🔍 Recovery Steps</h3>
+        <ul>
+          {% for step in result.steps %}
+            <li>{{ step }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <a href="/">← Back to Home</a>
+  </div>
+</body>
+</html>

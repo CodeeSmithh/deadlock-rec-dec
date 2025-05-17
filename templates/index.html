@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Deadlock Detection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #f0f2f5, #dfe9f3);
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 40px 0 20px;
+      font-size: 36px;
+      color: #2c3e50;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: auto;
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    label {
+      font-weight: 700;
+      margin-top: 20px;
+      display: block;
+      font-size: 16px;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #007bff;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
+    }
+
+    button:hover {
+      background: #0056c4;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    table h3 {
+      margin-bottom: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    th {
+      background: #f1f1f1;
+      font-weight: bold;
+    }
+
+    input[type="number"] {
+      width: 60px;
+      padding: 6px;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      table, th, td {
+        font-size: 12px;
+      }
+
+      input[type="number"] {
+        width: 45px;
+      }
+    }
+
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .btn-row button {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    h3 {
+      margin-top: 30px;
+      color: #34495e;
+    }
+  </style>
+</head>
+<body>
+  <h1>Deadlock Detection System</h1>
+  <div class="container">
+    <label>Number of Processes:</label>
+    <input type="number" id="numProcesses" min="1" placeholder="Enter number of processes">
+
+    <label>Number of Resources:</label>
+    <input type="number" id="numResources" min="1" placeholder="Enter number of resources">
+
+    <div class="btn-row">
+      <button onclick="generateMatrices()">Generate Matrices</button>
+    </div>
+
+    <form id="matrixForm" method="POST" action="/result">
+      <div id="matrixInputs"></div>
+      <input type="hidden" name="matrixData" id="matrixData">
+      <div class="btn-row">
+        <button type="submit" onclick="prepareData()">Start Detection</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function generateMatrices() {
+      const p = parseInt(document.getElementById("numProcesses").value);
+      const r = parseInt(document.getElementById("numResources").value);
+      const div = document.getElementById("matrixInputs");
+      if (!p || !r) return alert("Please enter valid numbers for processes and resources.");
+
+      div.innerHTML = generateTable("Allocation Matrix", "alloc", p, r)
+                    + generateTable("Request Matrix", "req", p, r)
+                    + generateTable("Available Resources", "avail", 1, r);
+    }
+
+    function generateTable(title, prefix, rows, cols) {
+      let html = `<h3>${title}</h3><table><tr><th></th>`;
+      for (let j = 0; j < cols; j++) html += `<th>R${j}</th>`;
+      html += "</tr>";
+      for (let i = 0; i < rows; i++) {
+        html += `<tr><th>${prefix !== "avail" ? "P" + i : ""}</th>`;
+        for (let j = 0; j < cols; j++) {
+          html += `<td><input type="number" name="${prefix}_${i}_${j}" min="0"></td>`;
+        }
+        html += "</tr>";
+      }
+      html += "</table>";
+      return html;
+    }
+
+    function prepareData() {
+      const p = parseInt(document.getElementById("numProcesses").value);
+      const r = parseInt(document.getElementById("numResources").value);
+      const data = {
+        numProcesses: p,
+        numResources: r,
+        alloc: [],
+        req: [],
+        avail: []
+      };
+
+      for (let i = 0; i < p; i++) {
+        data.alloc[i] = [];
+        data.req[i] = [];
+        for (let j = 0; j < r; j++) {
+          data.alloc[i][j] = parseInt(document.querySelector(`[name='alloc_${i}_${j}']`).value || 0);
+          data.req[i][j] = parseInt(document.querySelector(`[name='req_${i}_${j}']`).value || 0);
+        }
+      }
+
+      for (let j = 0; j < r; j++) {
+        data.avail[j] = parseInt(document.querySelector(`[name='avail_0_${j}']`).value || 0);
+      }
+
+      document.getElementById("matrixData").value = JSON.stringify(data);
+    }
+  </script>
+</body>
+</html>
